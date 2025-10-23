@@ -1,27 +1,20 @@
 "use client";
 import { use, useEffect, useMemo, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, } from "framer-motion";
 import {
-  Activity,
   ArrowDown,
   ArrowDownRight,
-  ArrowRight,
   ArrowUp,
   ArrowUpRight,
-  BarChart2,
   Bell,
   BookOpen,
-  ChevronRight,
   Clock,
   DollarSign,
   Eye,
   Globe,
-  PieChart,
-  Plus,
   PlusCircle,
   Search,
   ShoppingCart,
-  TrendingUp,
   User,
   Zap,
 } from "lucide-react";
@@ -135,7 +128,7 @@ const BreadCrumb = ({ stock }) => {
   );
 };
 
-const getRandom = (currentvalue, points) => {
+const generateRandomData = (currentvalue, points) => {
   const data = [["Time", "Low", "Open", "Close", "High"]];
   for (let i = 0; i < points; i++) {
     const time = new Date(Date.now() - i * 5000).toLocaleTimeString();
@@ -149,33 +142,29 @@ const getRandom = (currentvalue, points) => {
 };
 
 const StockChart = ({ stock }) => {
-  const [timerange, settimerange] = useState("5M");
-  const [currentvalue, setcurrentvalue] = useState(485451);
-  const [change, setchange] = useState({ value: 0, percentage: 0 });
-  const [data, setdata] = useState(getRandom(currentvalue, 5));
+  const [timeRange, setTimeRange] = useState("5M");
+  const [data, setData] = useState(generateRandomData(425371, 5));
+  const [currentValue, setCurrentValue] = useState(425371);
+  const [change, setChange] = useState({ value: 0, percentage: 0 });
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const newData = getRandom(currentvalue, getDataPoints(timerange));
-      setdata((prev) => [...prev, ...newData.slice(1)]);
-      setcurrentvalue(newData[newData.length - 1][3]);
-      const initialvalue = data[1][2];
-      const changevalue = currentvalue - initialvalue;
-      const changepercentage = (changevalue / initialvalue) * 100;
-      setchange({ value: changevalue, percentage: changepercentage });
+      const newData = generateRandomData(
+        currentValue,
+        getDataPoints(timeRange)
+      );
+      setData((prevData) => [...prevData, ...newData.slice(1)]);
+      setCurrentValue(newData[newData.length - 1][3]);
+      console.log(newData);
+      const initialValue = data[1][2];
+      const changeValue = currentValue - initialValue;
+      const changePercentage = (changeValue / initialValue) * 100;
+      setChange({ value: changeValue, percentage: changePercentage });
     }, 5000);
-    return () => clearInterval(interval);
-  }, [timerange, data]);
 
-  const options = {
-    legend: "none",
-    backgroundColor: "transparent",
-    bar: { groupWidth: "100%" }, // Remove space between bars.
-    candlestick: {
-      fallingColor: { strokeWidth: 0, fill: "#a52714" }, // red
-      risingColor: { strokeWidth: 0, fill: "#0f9d58" }, // green
-    },
-  };
+    return () => clearInterval(interval);
+  }, [timeRange, currentValue, data]);
+
   const getDataPoints = (range) => {
     switch (range) {
       case "5M":
@@ -192,31 +181,84 @@ const StockChart = ({ stock }) => {
         return 5;
     }
   };
+
+  const options = useMemo(
+    () => ({
+      backgroundColor: "transparent",
+      chartArea: { width: "90%", height: "80%" },
+      hAxis: {
+        textStyle: { color: "#9CA3AF" },
+        baselineColor: "#4B5563",
+        gridlines: { color: "transparent" },
+        format: "HH:mm",
+      },
+      vAxis: {
+        textStyle: { color: "#9CA3AF" },
+        baselineColor: "#4B5563",
+        gridlines: { color: "#4B5563" },
+      },
+      legend: { position: "none" },
+      candlestick: {
+        fallingColor: { strokeWidth: 0, fill: "#EF4444" },
+        risingColor: { strokeWidth: 0, fill: "#10B981" },
+      },
+      animation: {
+        startup: true,
+        duration: "1000s",
+        easing: "out",
+      },
+    }),
+    []
+  );
+
+
   return (
-    <motion.div {...fadeinup} className="bg-gray-800 p-4 rounded-sm">
-      <div className="flex justify-between mb-2 not-sm:flex-col">
+    <motion.div
+      {...fadeinup}
+      className="bg-gray-800 p-6 rounded-lg shadow-lg my-6"
+    >
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
         <div>
-          <h2 className="font-semibold text-xl">{stock}</h2>
-          <div className="flex">
-            <span className="mr-2 text-white text-xl font-semibold">{currentvalue.toFixed(2)}</span>
-            <span
-              className={`${
-                change.value >= 0 ? "text-green-500" : "text-red-500"
-              } flex items-center`}
-            > {change.value>=0 ?<ArrowUp size={16}/>:<ArrowDown size={16}/>}
-              {change.value >= 0 ? "+" : ""}
-              {change.value.toFixed(2)}({change.percentage.toFixed(2)}%)
+          <h2 className="text-2xl font-bold text-white">{stock}</h2>
+          <div className="flex items-center space-x-2">
+            <span className="text-3xl font-bold text-white">
+              {currentValue.toFixed(2)}
             </span>
+            <motion.span
+              className={`flex items-center ${
+                change.value >= 0 ? "text-green-500" : "text-red-500"
+              }`}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              key={change.value}
+            >
+              {change.value >= 0 ? (
+                <ArrowUpRight size={20} className="mr-1" />
+              ) : (
+                <ArrowDownRight size={20} className="mr-1" />
+              )}
+              {change.value > 0 ? "+" : ""}
+              {change.value.toFixed(2)} ({change.percentage.toFixed(2)}%)
+            </motion.span>
           </div>
         </div>
-        <div className="flex gap-2">
-          <button className="bg-blue-600 duration-300 rounded-sm p-2 h-fit flex items-center text-white gap-1 cursor-pointer hover:scale-105 hover:bg-blue-500">
-            <PlusCircle />
+        <div className="flex space-x-2 mt-4 md:mt-0">
+          <motion.button
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors flex items-center"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <PlusCircle className="inline-block mr-2" size={16} />
             Create Alert
-          </button>
-          <button className="bg-blue-600 duration-300 rounded-sm p-2 h-fit flex items-center text-white gap-1 cursor-pointer hover:scale-105 hover:bg-blue-500">
-            <Eye /> Watchlist
-          </button>
+          </motion.button>
+          <motion.button
+            className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors flex items-center"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Eye className="inline-block mr-2" size={16} />
+            Watchlist
+          </motion.button>
         </div>
       </div>
       <Chart
@@ -225,56 +267,83 @@ const StockChart = ({ stock }) => {
         height="400px"
         data={data}
         options={options}
-        legendToggle={true}
       />
-      <div className="flex justify-between m-3">
+      <div className="flex justify-between mt-4 overflow-x-auto">
         {["5M", "10M", "15M", "30M", "1H"].map((range) => (
-          <button
+          <motion.button
             key={range}
-            onClick={() => settimerange(range)}
-            className={`${
-              range === timerange ? "text-blue-500" : ""
-            } cursor-pointer`}
+            className={`text-sm ${
+              timeRange === range ? "text-blue-500" : "text-gray-300"
+            } hover:text-blue-500 transition-colors flex items-center`}
+            onClick={() => setTimeRange(range)}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
           >
-            <Clock />
+            <Clock size={14} className="mr-1" />
             {range}
-          </button>
+          </motion.button>
         ))}
       </div>
     </motion.div>
   );
 };
 
-const OptionsTable=({stock})=>{
-  const [options, setoptions] = useState([
-    {strike:25300,callPrice:95.4,callChange:-10.9,putPrice:96.65,putChange:28.85},
-    {strike:25200,callPrice:95.4,callChange:-10.9,putPrice:96.65,putChange:28.85},
-    {strike:25100,callPrice:95.4,callChange:-10.9,putPrice:96.65,putChange:28.85},
-    {strike:24900,callPrice:95.4,callChange:-10.9,putPrice:96.65,putChange:28.85},
-    {strike:24800,callPrice:95.4,callChange:-10.9,putPrice:96.65,putChange:28.85},
-    {strike:24700,callPrice:95.4,callChange:-10.9,putPrice:96.65,putChange:28.85},
-    {strike:24600,callPrice:95.4,callChange:-10.9,putPrice:96.65,putChange:28.85},
+const OptionsTable = ({ stock }) => {
+  const [options, setOptions] = useState([
+    {
+      strike: 25400,
+      callPrice: 115.15,
+      callChange: 17.0,
+      putPrice: 97.55,
+      putChange: -15.55,
+    },
+    {
+      strike: 25300,
+      callPrice: 95.4,
+      callChange: -10.9,
+      putPrice: 96.65,
+      putChange: 28.85,
+    },
+    {
+      strike: 25200,
+      callPrice: 78.5,
+      callChange: 32.78,
+      putPrice: 73.65,
+      putChange: -12.25,
+    },
+    {
+      strike: 25100,
+      callPrice: 29.7,
+      callChange: -10.14,
+      putPrice: 28.3,
+      putChange: 20.74,
+    },
   ]);
-  useEffect(()=>{
-    const interval=setInterval(()=>{
-      setoptions(prev=>(
-        prev.map(option=>(
-          {...option,callPrice:option.callPrice + (Math.random()-0.5) * 5,
-            callChange:(Math.random()-0.5)*10,
-            putPrice:option.putPrice+ (Math.random()-0.5) * 5,putChange:(Math.random()-0.5)*10,
-          }
-        ))
-      ))
-    },1000)
-    return ()=>clearInterval(interval);
-  },[]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setOptions((prevOptions) =>
+        prevOptions.map((option) => ({
+          ...option,
+          callPrice: option.callPrice + (Math.random() - 0.5) * 5,
+          callChange: (Math.random() - 0.5) * 10,
+          putPrice: option.putPrice + (Math.random() - 0.5) * 5,
+          putChange: (Math.random() - 0.5) * 10,
+        }))
+      );
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <motion.div {...fadeinup} className="mt-10 bg-gray-800 rounded-sm p-4">
-      <h3 className="text-xl tex-white font-bold flex items-center mb-4">
-        {" "}
-        <DollarSign size={24} className="mr-2"/>
-        Top {stock} options
+    <motion.div
+      {...fadeinup}
+      className="bg-gray-800 p-6 rounded-lg shadow-lg my-6 overflow-x-auto"
+    >
+      <h3 className="text-xl font-bold text-white mb-4 flex items-center">
+        <DollarSign size={24} className="mr-2" />
+        Top {stock} Options
       </h3>
       <table className="w-full text-left">
         <thead>
@@ -285,24 +354,58 @@ const OptionsTable=({stock})=>{
           </tr>
         </thead>
         <tbody>
-          {options.map((option,index)=>(
-            <motion.tr key={index} {...fadeinup} className="border-b border-gray-700">
+          {options.map((option, index) => (
+            <motion.tr
+              key={index}
+              className="border-b border-gray-700"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
               <td className="py-2 text-white">{option.strike}</td>
               <td className="py-2">
-                <div>{option.callPrice.toFixed(2)}</div>
-                <div className={`${option.callChange > 0 ?"text-green-500":"text-red-500"}`}>{option.callChange > 0 ?<ArrowUp size={16} className="inline mr-1"/>:<ArrowDown size={16} className="inline mr-1"/>}{option.callChange.toFixed(2)}</div>
+                <div className="text-white">{option.callPrice.toFixed(2)}</div>
+                <motion.div
+                  className={
+                    option.callChange >= 0 ? "text-green-500" : "text-red-500"
+                  }
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  key={option.callChange}
+                >
+                  {option.callChange > 0 ? (
+                    <ArrowUpRight size={14} className="inline mr-1" />
+                  ) : (
+                    <ArrowDownRight size={14} className="inline mr-1" />
+                  )}
+                  {option.callChange.toFixed(2)}%
+                </motion.div>
               </td>
               <td className="py-2">
-                <div>{option.putPrice.toFixed(2)}</div>
-                <div>{option.putChange > 0 ?<ArrowUp size={16} className="inline mr-1"/>:<ArrowDown size={16} className="inline mr-1"/>}{option.putChange.toFixed(2)}</div>
+                <div className="text-white">{option.putPrice.toFixed(2)}</div>
+                <motion.div
+                  className={
+                    option.putChange >= 0 ? "text-green-500" : "text-red-500"
+                  }
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  key={option.putChange}
+                >
+                  {option.putChange > 0 ? (
+                    <ArrowUpRight size={14} className="inline mr-1" />
+                  ) : (
+                    <ArrowDownRight size={14} className="inline mr-1" />
+                  )}
+                  {option.putChange.toFixed(2)}%
+                </motion.div>
               </td>
             </motion.tr>
           ))}
         </tbody>
       </table>
     </motion.div>
-  )
-}
+  );
+};
 
 export default function page({ params }) {
   const { id } = use(params);
