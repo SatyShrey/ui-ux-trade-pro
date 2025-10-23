@@ -108,14 +108,14 @@ export default function Home() {
   return (
     <div ref={containerRef} className="bg-gray-900 min-h-screen text-white">
       <header className=" container mx-auto px-4 py-6 flex justify-between items-center relative z-20">
-        <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-blue-500 font-bold text-3xl"
+        <motion.span
+          onClick={() => router.push("/")}
+          className="text-2xl font-bold text-blue-500"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
           TradePro
-        </motion.div>
+        </motion.span>
         <nav className="hidden md:block">
           <ul className="flex space-x-6">
             {["Markets", "Tading", "Analysis", "Learn"].map((item, index) => (
@@ -138,10 +138,10 @@ export default function Home() {
           transition={{ duration: 0.6 }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          className="hidden md:block bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors transform hover:scale-105"
           onClick={() => router.push("/dashboard")}
-          className="hidden md:block bg-blue-600 p-2 transition-colors duration-300 rounded hover:bg-blue-500 cursor-pointer"
         >
-          Start trading
+          Start Trading
         </motion.button>
         <motion.button
           initial={{ opacity: 0, x: 50 }}
@@ -203,14 +203,14 @@ export default function Home() {
               tools
             </motion.p>
             <motion.button
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="p-2 rounded bg-blue-600 hover:bg-blue-500 flex cursor-pointer items-center mx-auto transition-colors duration-300"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              className="bg-blue-600 text-white px-8 py-4 rounded-md text-xl hover:bg-blue-700 transition-colors flex items-center mx-auto"
             >
-              Open Free Account <ArrowRight />
+              Open Free Account <ArrowRight className="ml-2" />
             </motion.button>
           </div>
         </AnimatedSection>
@@ -249,9 +249,9 @@ export default function Home() {
                 className="bg-gray-800 p-8 rounded-2xl shadow-2xl hover:scale-105 duration-300 relative overflow-hidden group"
               >
                 <img
-                  className="w-full rounded-2xl"
-                  src="https://cdn.pixabay.com/photo/2021/08/06/00/38/stock-trading-6525084_1280.jpg"
-                  alt="trading platform screen-shot"
+                  className="w-full rounded-xl"
+                  src="https://i.ibb.co/C1jWyk9/1.jpg"
+                  alt="Trading platform screenshot"
                 />
                 <div className="absolute inset-0 bg-blue-800 opacity-0 group-hover:opacity-20 transition-opacity"></div>
               </motion.div>
@@ -269,9 +269,9 @@ export default function Home() {
                 className="bg-gray-800 p-8 rounded-2xl shadow-2xl hover:scale-105 duration-300 relative overflow-hidden group"
               >
                 <img
-                  className="w-full rounded-2xl"
-                  src="https://cdn.pixabay.com/photo/2024/05/31/05/24/trading-8799817_1280.png"
-                  alt="trading platform screen-shot"
+                  src="https://i.ibb.co/0K3ZTzt/2.jpg"
+                  alt="Market analysis feature"
+                  className="w-full rounded-xl"
                 />
                 <div className="absolute inset-0 bg-blue-800 opacity-0 group-hover:opacity-20 transition-opacity"></div>
               </div>
@@ -326,19 +326,26 @@ export default function Home() {
           </div>
         </AnimatedSection>
 
-        <AnimatedSection>
-          <div className="bg-blue-500 rounded text-center py-12 relative overflow-hidden group">
-            <div className=" absolute inset-0 bg-blue-700 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-            <h2 className="font-bold text-4xl mb-6 relative z-10">
-              Ready to start trading
+       <AnimatedSection>
+          <div className="bg-blue-600 rounded-2xl p-12 text-center py-12 relative overflow-hidden group">
+            <motion.div
+              className="absolute inset-0 bg-blue-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              whileHover={{ opacity: 1 }}
+            />
+            <h2 className="text-4xl font-bold mb-6 relative z-10">
+              Ready to Start Trading?
             </h2>
-            <p className="text-xl mb-8 rlative z-10">
-              Join thousands of traders and start your journey to fnancial
+            <p className="text-xl mb-8 relative z-10">
+              Join thousands of traders and start your journey to financial
               success.
             </p>
-            <button className="bg-white text-blue-600 p-2 rounded-md text-xl font-bold hover:bg-gray-200 transition-colors duration-300 relative z-10 cursor-pointer">
+            <motion.button
+              className="bg-white text-blue-600 px-8 py-4 rounded-md text-xl font-bold hover:bg-gray-100 transition-colors relative z-10"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
               Create Free Account
-            </button>
+            </motion.button>
           </div>
         </AnimatedSection>
       </main>

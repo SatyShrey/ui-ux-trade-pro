@@ -404,14 +404,12 @@ const ProductsAndTools = () => {
         {products.map((product) => (
           <motion.div
             key={product.name}
-            className="bg-gray-800 p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow text-center cursor-pointer"
+            className="bg-gray-800 p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow text-center cursor-pointer rotate-parent"
             whileHover={{ scale: 1.05, backgroundColor: "#2D3748" }}
             whileTap={{ scale: 0.95 }}
           >
             <motion.div
-              className="bg-blue-500 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2"
-              whileHover={{ rotate: 360 }}
-              transition={{ duration: 0.5 }}
+              className="bg-blue-500 w-12 h-12 rounded-full flex items-center duration-300 justify-center mx-auto mb-2 rotate-child"
             >
               <product.icon className="text-white" />
             </motion.div>
