@@ -13,7 +13,7 @@ import {
   Zap,
 } from "lucide-react";
 import React, { useRef, useState } from "react";
-import { motion, useInView } from "framer-motion";
+import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useRouter } from "next/navigation";
 
 const tradingFeatures = [
@@ -88,22 +88,7 @@ const FeatureBox = ({ icon, title, description }) => {
 export default function Home() {
   const [ismenuopen, setismenuopen] = useState(false);
   const containerRef = useRef(null);
-  const [menuHeight, setmenuHeight] = useState(0);
-  const timeOut = useRef();
   const router = useRouter();
-
-  function toggleMenu() {
-    clearTimeout(timeOut.current);
-    if (ismenuopen) {
-      setmenuHeight(0);
-      timeOut.current = setTimeout(() => {
-        setismenuopen(false);
-      }, 600);
-    } else {
-      setmenuHeight(230);
-      setismenuopen(true);
-    }
-  }
 
   return (
     <div ref={containerRef} className="bg-gray-900 min-h-screen text-white">
@@ -148,26 +133,28 @@ export default function Home() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
           className="md:hidden text-white cursor-pointer active:scale-95 hover:scale-105"
-          onClick={toggleMenu}
+          onClick={()=>setismenuopen(ismenuopen=>!ismenuopen)}
         >
           {ismenuopen ? <X size={24} /> : <Menu size={24} />}
         </motion.button>
       </header>
-      {ismenuopen && (
+      
+      <AnimatePresence>
+        {ismenuopen && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: menuHeight }}
-          transition={{ duration: 0.6 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3 }}
           className="md:hidden bg-gray-800 overflow-hidden px-2"
         >
-          <ul>
+          <ul className="space-y-3 my-3">
             {["Markets", "Tading", "Analysis", "Learn"].map((item, index) => (
               <motion.li
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 + 0.3 }}
+                transition={{ duration: 0.3, delay: index * 0.1 + 0.3 }}
                 key={index}
-                className="my-4"
               >
                 <span className="text-gray-300 hover:text-blue-500 transition-colors cursor-pointer">
                   {item}
@@ -178,14 +165,15 @@ export default function Home() {
           <motion.button
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
             onClick={() => router.push("/dashboard")}
-            className="bg-blue-600 p-2 transition-colors duration-300 rounded hover:bg-blue-500 cursor-pointer active:scale-[99%] w-full"
+            className="bg-blue-600 p-2 transition-colors duration-300 rounded hover:bg-blue-500 cursor-pointer active:scale-[99%] w-full my-2"
           >
             Start trading
           </motion.button>
         </motion.div>
       )}
+      </AnimatePresence>
 
       <main className="container mx-auto px-4">
         <AnimatedSection>

@@ -129,8 +129,8 @@ const BreadCrumb = ({ stock }) => {
 const generateRandomData = (currentvalue, points) => {
   const data = [["Time", "Low", "Open", "Close", "High"]];
   for (let i = 0; i < points; i++) {
-    const time = new Date(Date.now() - i * 5000).toLocaleTimeString();
-    const open = currentvalue + Math.random() * 10 - 5;
+    const time = new Date(Date.now()).toLocaleTimeString();
+    const open = currentvalue;
     const close = open + Math.random() * 10 - 5;
     const low = Math.min(open, close) - Math.random() * 5;
     const high = Math.max(open, close) + Math.random() * 5;
@@ -151,7 +151,7 @@ const StockChart = ({ stock }) => {
         currentValue,
         getDataPoints(timeRange)
       );
-      setData((prevData) => [...prevData, ...newData.slice(1)]);
+      setData((prevData) => [...prevData.slice(-20), ...newData.slice(0)]);
       setCurrentValue(newData[newData.length - 1][3]);
       console.log(newData);
       const initialValue = data[1][2];
@@ -183,15 +183,13 @@ const StockChart = ({ stock }) => {
   const options = useMemo(
     () => ({
       backgroundColor: "transparent",
-      chartArea: { width: "90%", height: "80%" },
       hAxis: {
-        textStyle: { color: "#9CA3AF" },
+        textStyle: { color: "#9CA3AF",fontSize:11 },
         baselineColor: "#4B5563",
         gridlines: { color: "transparent" },
-        format: "HH:mm",
       },
       vAxis: {
-        textStyle: { color: "#9CA3AF" },
+        textStyle: { color: "#9CA3AF" ,fontSize:11},
         baselineColor: "#4B5563",
         gridlines: { color: "#4B5563" },
       },
@@ -410,7 +408,7 @@ export default function page({ params }) {
   return (
     <div className="bg-gray-900 min-h-screen text-gray-300">
       <Header />
-      <main className="container p-4 mx-auto">
+      <main className="container p-4 not-sm:px-2 mx-auto">
         <BreadCrumb stock={id} />
         <StockChart stock={id} />
         <OptionsTable stock={id}/>
