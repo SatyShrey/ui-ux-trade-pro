@@ -130,6 +130,7 @@ const generateRandomData = (currentvalue, points) => {
   const data = [["Time", "Low", "Open", "Close", "High"]];
   for (let i = 0; i < points; i++) {
     const time = new Date(Date.now()).toLocaleTimeString();
+    
     const open = currentvalue;
     const close = open + Math.random() * 10 - 5;
     const low = Math.min(open, close) - Math.random() * 5;
